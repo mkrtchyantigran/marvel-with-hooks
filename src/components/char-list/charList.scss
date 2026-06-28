@@ -46,4 +46,11 @@
     text-transform: uppercase;
     color: $white;
   }
+
+  &__end {
+    margin-top: 30px;
+    text-align: center;
+    font-weight: bold;
+    color: $primary;
+  }
 }

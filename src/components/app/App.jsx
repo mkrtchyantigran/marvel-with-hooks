@@ -1,36 +1,33 @@
 
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import Loader from '../loader/loader';
 
-import AppHeader from "../app-header/AppHeader";
-import MainPage from '../../pages/MainPage';
-import ComicsPage from '../../pages/ComicsPage';
-import SingleComicPage from '../../pages/single/SingleComicPage';
-import Page404 from '../../pages/404';
+const AppHeader = lazy(() => import("../app-header/AppHeader"));
+const MainPage = lazy(() => import('../../pages/MainPage'));
+const ComicsPage = lazy(() => import('../../pages/ComicsPage'));
+const SingleComicPage = lazy(() => import('../../pages/single/SingleComicPage'));
+
+const Page404 = lazy(() => import("../../pages/404"));
 
 export default function App() {
- 
+
 
   return (
-    <Router>
+    <BrowserRouter>
       <div className="app">
-        <AppHeader />
-        <main>
-          <Switch>
-            <Route exact path="/">
-              <MainPage />
-            </Route>
-            <Route exact path="/comics/">
-                <ComicsPage />
-            </Route>
-            <Route exact path="/comics/:comicId/">
-              <SingleComicPage />
-            </Route>
-            <Route path="*">
-              <Page404 />
-            </Route>
-          </Switch>
-        </main>
+        <Suspense fallback={<Loader />}>
+          <AppHeader />
+          <main>
+            <Routes>
+              <Route path="/" element={<MainPage />} />
+              <Route path="/comics/" element={<ComicsPage />} />
+              <Route path="/comics/:comicId/" element={<SingleComicPage />} />
+              <Route path="*" element={<Page404 />} />
+            </Routes>
+          </main>
+        </Suspense>
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }

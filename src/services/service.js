@@ -2,7 +2,7 @@ import useHttp from "../hooks/http.hook";
 
 export default function useService () {
 
-    const { Loading, error, request, clearError } = useHttp();
+    const { loading, error, request, clearError } = useHttp();
 
     const _API_URL = "https://marvel-server-zeta.vercel.app";
     const _API_KEY = "d4eecb0c66dedbfae4eab45d312fc1df";
@@ -18,6 +18,14 @@ export default function useService () {
     const getCharacter = async (id) => {
         const res = await request(`${_API_URL}/characters/${id}/?apikey=${_API_KEY}`);
         return _transformCharacter(res.data.results[0]);
+    }
+
+    const getCharacterByName = async (name) => {
+        // Сервер ищет по точному совпадению с учётом регистра ("HULK" не найдёт "Hulk"),
+        // поэтому приводим ввод к виду "Каждое Слово С Заглавной".
+        const normalized = name.trim().toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+        const res = await request(`${_API_URL}/characters?name=${encodeURIComponent(normalized)}&apikey=${_API_KEY}`);
+        return res.data.results.length ? _transformCharacter(res.data.results[0]) : null;
     }
 
     const getComics = async (offset = 8) => {
@@ -50,12 +58,12 @@ export default function useService () {
             description: comic.description,
             pageCount: comic.pageCount,
             thumbnail: comic.thumbnail.path + "." + comic.thumbnail.extension,
-            lenguage: comic.textObjects.language,
+            language: comic.textObjects[0]?.language || "unknown",
             price: comic.prices[0].price
         }
 
     }
 
-    return {Loading, error, clearError, getCharactersAll, getCharacter, getComics, getComic }
+    return { loading, error, clearError, getCharactersAll, getCharacter, getCharacterByName, getComics, getComic }
 
 }

@@ -17,10 +17,6 @@ export default function ComicsList() {
         onRequest(offset, true)
     }, [])
 
-    useEffect(() => {
-        setIsRequestLoading(offset > comicsList.length);
-    }, [offset])
-
     const { loading, error, clearError, getComics } = useService();
 
 
@@ -31,9 +27,10 @@ export default function ComicsList() {
 
     }
     const onComicsListLoaded = (newComicsList) => {
+        const ended = newComicsList.length < 8;
         setComicsList((comicsList) => [...comicsList, ...newComicsList])
         setIsRequestLoading(false);
-        setIsNoMoreComics(offset > comicsList.length);
+        setIsNoMoreComics(ended);
         setOffset(offset => offset + 8);
     }
 
@@ -58,16 +55,18 @@ export default function ComicsList() {
                 }
             </ul>
             {
-                isNoMoreComics ? null : <button
-                    onClick={() => onRequest(offset)}
-                    className="btn btn__main btn__long"
-                    disabled={isRequestLoading}
-                >
-                    <div className="inner">
-                        {loading ? "loading..." : "load more"}
-                    </div>
+                isNoMoreComics
+                    ? <p className="comics__end">There is no more comics</p>
+                    : <button
+                        onClick={() => onRequest(offset)}
+                        className="btn btn__main btn__long"
+                        disabled={isRequestLoading}
+                    >
+                        <div className="inner">
+                            {isRequestLoading ? "loading..." : "load more"}
+                        </div>
 
-                </button>
+                    </button>
             }
         </div>
     )

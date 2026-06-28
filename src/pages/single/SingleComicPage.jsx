@@ -50,7 +50,7 @@ const View = ({ comic }) => {
                 <p className="single-comic__descr">Language: {language}</p>
                 <p className="single-comic__price">${price}</p>
             </div>
-            <Link to="/comics/" className="single-comic__back">Bach To All</Link>
+            <Link to="/comics/" className="single-comic__back">Back To All</Link>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, use } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import useService from '../../services/service';
 import "./charList.scss";
 import Loader from '../loader/loader';
@@ -20,10 +20,6 @@ export default function CharList({ onCharSelected }) {
     // }
   }, [])
 
-  useEffect(() => {
-    setIsNoMoreChars(offset > charList.length);
-  }, [offset, charList.length])
-
   const refItems = useRef([]);
 
   const { loading, error, getCharactersAll } = useService();
@@ -41,10 +37,11 @@ export default function CharList({ onCharSelected }) {
 
 
   const onCharListLoaded = (newCharList) => {
+    const ended = newCharList.length < 6;
     setCharList((charList) => [...charList, ...newCharList]);
     setIsRequestLoading(false);
     setOffset(offset => offset + 6);
-    setIsNoMoreChars(offset > charList.length);
+    setIsNoMoreChars(ended);
   }
 
 
@@ -53,8 +50,6 @@ export default function CharList({ onCharSelected }) {
     refItems.current[id].classList.add('char__item_selected');
     refItems.current[id].focus();
   }
-
-  console.log("rendering char list");
 
   return (
     <div className="char__list">
@@ -70,16 +65,18 @@ export default function CharList({ onCharSelected }) {
 
 
       {
-        isNoMoreChars ? null : <button
-          onClick={() => onRequest(offset)}
-          className="btn btn__main btn__long"
-          disabled={isRequestLoading}
-        >
-          <div className="inner">
-            {loading ? "loading..." : "load more"}
-          </div>
+        isNoMoreChars
+          ? <p className="char__end">There is no more characters</p>
+          : <button
+            onClick={() => onRequest(offset)}
+            className="btn btn__main btn__long"
+            disabled={isRequestLoading}
+          >
+            <div className="inner">
+              {isRequestLoading ? "loading..." : "load more"}
+            </div>
 
-        </button>
+          </button>
 
       }
     </div>

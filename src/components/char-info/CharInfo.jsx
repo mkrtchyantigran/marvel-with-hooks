@@ -39,10 +39,10 @@ export default function CharInfo({ charId }) {
 
   return (
     <div className="char__info">
-      {char || loading || error ? null : <Skeleton />}
-      {error ? <Error /> : null}
-      {loading ? <Loader /> : null}
-      {!(loading || error || !char) ? <View char={char} /> : null}
+      {!charId ? <Skeleton /> : null}
+      {charId && error ? <Error /> : null}
+      {charId && loading ? <Loader /> : null}
+      {charId && !loading && !error && char ? <View char={char} /> : null}
     </div>
   );
 }
